@@ -6,8 +6,11 @@
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch"
+    "pkg:build": "tsup",
+    "pkg:dev": "tsup --watch",
+    "demo:dev": "cd example && pnpm dev",
+    "demo:build": "cd example && pnpm build",
+    "dev": "npm-run-all --parallel pkg:dev demo:dev"
   },
   "files": [
     "dist"
@@ -35,6 +38,7 @@
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-react": "^7.32.2",
     "hash-css-selector": "^1.1.0",
+    "npm-run-all": "^4.1.5",
     "postcss": "^8.4.43",
     "postcss-modules": "^6.0.0",
     "prettier": "^3.3.3",

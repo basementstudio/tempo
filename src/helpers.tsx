@@ -2,9 +2,10 @@ import { gsap } from 'gsap'
 
 import { VisualizerItem } from './types'
 import s from './index.module.css'
+import { VISUALIZER_PORTAL_ID } from './constants'
 
 const getShadowRoot = () => {
-  const shadowRoot = document.querySelector('#visualizer-portal')?.shadowRoot
+  const shadowRoot = document.querySelector(`#${VISUALIZER_PORTAL_ID}`)?.shadowRoot
   return shadowRoot
 }
 

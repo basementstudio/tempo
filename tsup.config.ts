@@ -3,11 +3,12 @@ import path from "path";
 import fsPromises from "fs/promises";
 import postcss from "postcss";
 import postcssModules from "postcss-modules";
+import { MOUNT_EVENT_KEY } from "./src/constants";
 import { generateScopedName } from "hash-css-selector";
 
 const injectStyle = (css: string) => {
   return `      
-    window.addEventListener('visualizer-mounted', ({detail: { root }}) => {
+    window.addEventListener('${MOUNT_EVENT_KEY}', ({detail: { root }}) => {
       const style = document.createElement('style');
       style.textContent = ${css};
       root.shadowRoot.appendChild(style);

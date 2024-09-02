@@ -342,7 +342,6 @@ const Select = (props: React.HTMLAttributes<HTMLSelectElement> & { value: string
 }
 
 const Guides = () => {
-  console.log('here', s['guides-inner'])
   return (
     <div className={s['guides']}>
       <div className={s['guides-inner']}>
@@ -713,7 +712,6 @@ export const Visualizer = () => {
 
   /* Temporaly removed */
   useEffect(() => {
-    console.log(window)
     return
     if (!isUserScroll) return
 
@@ -964,7 +962,6 @@ export const Visualizer = () => {
 
       <div style={{ display: minimize ? 'none' : 'block' }}>
         <div
-          // onMouseDown={() => setSelectedTween(undefined)}
           className={s['main']}
           ref={panelRef}
         >

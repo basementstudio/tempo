@@ -1,4 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap');
+:host,
+.root {
+  font-family: 'JetBrains Mono', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+}
 
 .root {
   --color-gray-lighter: #a3a3a3;
@@ -25,7 +30,6 @@
   border-top: 1px solid var(--color-gray-light);
   overflow: hidden;
   line-height: 1;
-  font-family: 'JetBrains Mono', monospace;
   visibility: hidden;
   color: var(--color-white);
   transition: opacity 0.2s ease-out;

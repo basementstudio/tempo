@@ -196,7 +196,6 @@
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   font-size: 20px;
-  height: var(--controls-height);
 }
 
 .root .main .side .controls .play-pause,
@@ -207,6 +206,7 @@
   align-items: center;
   justify-content: center;
   background: var(--color-gray-dark);
+  height: calc(var(--controls-height) - 1px);
 }
 
 .root .main .side .controls .loop {

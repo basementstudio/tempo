@@ -3,6 +3,11 @@ import { gsap } from 'gsap'
 import { VisualizerItem } from './types'
 import s from './index.module.css'
 
+const getShadowRoot = () => {
+  const shadowRoot = document.querySelector('#visualizer-portal')?.shadowRoot
+  return shadowRoot
+}
+
 export const highlight = (target: SVGElement | HTMLElement) => {
   // Create a div element that has the same dimensions and position as the target
   const highlight = document.createElement('div')
@@ -16,13 +21,20 @@ export const highlight = (target: SVGElement | HTMLElement) => {
 
   highlight.classList.add(s['highlight'] as string)
 
+  const root = getShadowRoot()
+
+  if (!root) {
+    console.error('Tempo: Shadow root not found')
+    return
+  }
+
   // Append to body.
-  document.body.appendChild(highlight)
+  root.appendChild(highlight)
 
   // Clear instance
   return () => {
     try {
-      document.body.removeChild(highlight)
+      root.removeChild(highlight)
     } catch (error) {
       console.error('Failed to remove node')
     }

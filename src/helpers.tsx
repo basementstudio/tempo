@@ -1,7 +1,7 @@
 import { gsap } from 'gsap'
 
 import { VisualizerItem } from './types'
-import s from './visualizer.module.scss'
+import s from './index.module.css'
 
 export const highlight = (target: SVGElement | HTMLElement) => {
   // Create a div element that has the same dimensions and position as the target
@@ -34,11 +34,7 @@ export const highlight = (target: SVGElement | HTMLElement) => {
   needs to run, or the tween has a "from". So we need to protect
   the ease function from being called with an undefined fn().
 */
-export const SVGPlot = (
-  fn: (x: number) => number,
-  offset: { x?: number; y?: number } = {},
-  color = '#0ae448'
-) => {
+export const SVGPlot = (fn: (x: number) => number, offset: { x?: number; y?: number } = {}, color = '#0ae448') => {
   const points = []
 
   try {
@@ -47,23 +43,14 @@ export const SVGPlot = (
         const x = i / 100
         const y = fn(x)
 
-        return `${x * 100 + (offset?.x ?? 0)},${
-          100 - y * 100 + (offset?.y ?? 0)
-        }`
-      })
+        return `${x * 100 + (offset?.x ?? 0)},${100 - y * 100 + (offset?.y ?? 0)}`
+      }),
     )
   } catch (error) {
     console.log(error, fn)
   }
 
-  return (
-    <polyline
-      fill="none"
-      stroke={color}
-      strokeWidth="2"
-      points={points.join(' ')}
-    />
-  )
+  return <polyline fill="none" stroke={color} strokeWidth="2" points={points.join(' ')} />
 }
 
 export const colors = [
@@ -75,7 +62,7 @@ export const colors = [
   ['#818CF8', '#3730A3'],
   ['#C084FC', '#6B21A8'],
   ['#E879F9', '#86198F'],
-  ['rgba(244, 114, 182, 0.40)', '#9D174D']
+  ['rgba(244, 114, 182, 0.40)', '#9D174D'],
 ]
 
 export const getTargetString = (tween: VisualizerItem) => {

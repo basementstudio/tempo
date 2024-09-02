@@ -1,7 +1,7 @@
 'use client'
 
-import { internalEventEmmiter } from "./src/internal-event-emmiter"
-import { DataAttribute, GSAPChildWithHiddenVars } from "./src/types"
+import { internalEventEmmiter } from "./internal-event-emmiter"
+import { DataAttribute, GSAPChildWithHiddenVars } from "./types"
 import gsap from 'gsap'
 
 export const debug = (root: gsap.core.Timeline | gsap.core.Tween, { label }: { label: string }) => {

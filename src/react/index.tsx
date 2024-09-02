@@ -1,35 +1,41 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { Portal } from '@radix-ui/react-portal'
-import { useAppControls } from '~/gl/hooks/use-app-controls'
-import dynamic from 'next/dynamic'
-
-const VisualizerPanel = dynamic(() => import('./src').then(m => m.Visualizer), { ssr: false })
-
-// ---- Debugger
+import { useEffect, useState, useRef } from 'react'
+import { createRoot } from 'react-dom/client'
+import { Visualizer as VisualizerPanel } from '../index'
 
 export default function Visualizer() {
-  const { isDebug } = useAppControls()
   const [mountInstance, setMountInstance] = useState(false)
+  const shadowHostRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const w = window as {
       __scrollytelling_alreadyMountedDebuggerInstance?: boolean
     }
 
-    const alreadyMountedInstance =
-      w.__scrollytelling_alreadyMountedDebuggerInstance
+    const alreadyMountedInstance = w.__scrollytelling_alreadyMountedDebuggerInstance
     if (alreadyMountedInstance) return
     setMountInstance(true)
     w.__scrollytelling_alreadyMountedDebuggerInstance = true
   }, [])
 
-  if (!mountInstance || !isDebug) return <></>
+  useEffect(() => {
+    if (mountInstance && shadowHostRef.current) {
+      const shadowRoot = shadowHostRef.current.attachShadow({ mode: 'open' })
+      window.dispatchEvent(
+        new CustomEvent('visualizer-mounted', {
+          detail: { root: shadowHostRef.current },
+        }),
+      )
+      const container = document.createElement('div')
+      container.id = 'shadow-root'
+      shadowRoot.appendChild(container)
+      const root = createRoot(container)
+      root.render(<VisualizerPanel />)
+    }
+  }, [mountInstance])
 
-  return (
-    <Portal data-lenis-prevent id='visualizer-portal'>
-      <VisualizerPanel />
-    </Portal>
-  )
+  if (!mountInstance) return <></>
+
+  return <div ref={shadowHostRef} data-lenis-prevent id="visualizer-portal"></div>
 }

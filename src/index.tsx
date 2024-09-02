@@ -2,7 +2,8 @@ import { Fragment, useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
 import type { VisualizerRoot, VisualizerItem, DataAttribute } from './types'
 
-import s from './visualizer.module.scss'
+import './reset.css'
+import s from './index.module.css'
 import { internalEventEmmiter } from './internal-event-emmiter'
 import { clsx } from './utils'
 
@@ -18,31 +19,18 @@ const EasePlot = ({ tween }: { tween: VisualizerItem }) => {
     return internalEventEmmiter.on('timeline:update', () => {
       const progress = tween.progress()
 
-      if (
-        !progressMarkerRef.current ||
-        !valueMarkerRef.current ||
-        !valueTextRef.current
-      )
-        return
+      if (!progressMarkerRef.current || !valueMarkerRef.current || !valueTextRef.current) return
 
       progressMarkerRef.current.setAttribute('x1', `${progress * 100}`)
       progressMarkerRef.current.setAttribute('x2', `${progress * 100}`)
-      valueMarkerRef.current.setAttribute(
-        'cy',
-        `${100 - easeFn(progress) * 100}`
-      )
+      valueMarkerRef.current.setAttribute('cy', `${100 - easeFn(progress) * 100}`)
       valueMarkerRef.current.setAttribute('cx', `${progress * 100}`)
       valueTextRef.current.textContent = easeFn(progress).toFixed(2)
     })
   }, [tween])
 
   return (
-    <svg
-      width="100%"
-      viewBox="0 0 100 100"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="100%" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
       {/* Grid */}
       <line x1="0" y1="25" x2="100" y2="25" stroke="var(--color-gray)" />
       <line x1="0" y1="50" x2="100" y2="50" stroke="var(--color-gray)" />
@@ -55,32 +43,11 @@ const EasePlot = ({ tween }: { tween: VisualizerItem }) => {
       {SVGPlot(easeFn)}
 
       {/* Progress */}
-      <line
-        x1={0}
-        y1="0"
-        x2={0}
-        y2="100"
-        stroke="var(--color-white)"
-        ref={progressMarkerRef}
-      />
+      <line x1={0} y1="0" x2={0} y2="100" stroke="var(--color-white)" ref={progressMarkerRef} />
       {/* Value at progress marker */}
-      <circle
-        cx="0"
-        cy="0"
-        r="2"
-        fill="var(--color-orange)"
-        stroke="var(--color-white)"
-        ref={valueMarkerRef}
-      />
+      <circle cx="0" cy="0" r="2" fill="var(--color-orange)" stroke="var(--color-white)" ref={valueMarkerRef} />
       {/* Value at progress */}
-      <text
-        x="50"
-        y="50"
-        textAnchor="middle"
-        dominantBaseline="middle"
-        fill="var(--color-white)"
-        ref={valueTextRef}
-      >
+      <text x="50" y="50" textAnchor="middle" dominantBaseline="middle" fill="var(--color-white)" ref={valueTextRef}>
         {easeFn(0).toFixed(2)}
       </text>
     </svg>
@@ -90,7 +57,7 @@ const EasePlot = ({ tween }: { tween: VisualizerItem }) => {
 const useTimelineItem = ({
   root,
   tween,
-  onSelect
+  onSelect,
 }: {
   tween: VisualizerItem
   root: VisualizerRoot
@@ -160,7 +127,7 @@ const useTimelineItem = ({
 
       window.scrollTo({
         top: scroll,
-        behavior: holdingShift ? 'instant' : 'smooth'
+        behavior: holdingShift ? 'instant' : 'smooth',
       })
     }
   }
@@ -183,7 +150,7 @@ const useTimelineItem = ({
     startPerc,
     endPerc,
     setIsHovering,
-    isHovering
+    isHovering,
   }
 }
 
@@ -192,7 +159,7 @@ const Tween = ({
   tween,
   root,
   onSelect,
-  idx
+  idx,
 }: {
   selected: boolean
   tween: VisualizerItem
@@ -200,14 +167,11 @@ const Tween = ({
   onSelect: (t: VisualizerItem) => void
   idx: number
 }) => {
-  const {
-    targetString,
-    identifier,
-    startPerc,
-    endPerc,
-    onMouseDown,
-    setIsHovering
-  } = useTimelineItem({ root, tween, onSelect })
+  const { targetString, identifier, startPerc, endPerc, onMouseDown, setIsHovering } = useTimelineItem({
+    root,
+    tween,
+    onSelect,
+  })
 
   return (
     <div
@@ -218,17 +182,13 @@ const Tween = ({
         '--duration-percentage': endPerc - startPerc + '%',
         '--start-offset-percentage': startPerc + '%',
         '--tween-color': colors[idx % colors.length]?.[1],
-        background:
-          'linear-gradient(90deg, transparent 0%, ' +
-          colors[idx % colors.length]?.[0] +
-          ' 100%)'
+        background: 'linear-gradient(90deg, transparent 0%, ' + colors[idx % colors.length]?.[0] + ' 100%)',
       }}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
       onMouseDown={onMouseDown}
     >
-      {identifier}{' '}
-      {identifier && targetString ? ' | ' + targetString : targetString}
+      {identifier} {identifier && targetString ? ' | ' + targetString : targetString}
     </div>
   )
 }
@@ -238,7 +198,7 @@ const Set = ({
   tween,
   root,
   onSelect,
-  idx
+  idx,
 }: {
   selected: boolean
   tween: VisualizerItem
@@ -246,15 +206,16 @@ const Set = ({
   onSelect: (t: VisualizerItem) => void
   idx: number
 }) => {
-  const { targetString, startPerc, onMouseDown, setIsHovering } =
-    useTimelineItem({ root, tween, onSelect })
+  const { targetString, startPerc, onMouseDown, setIsHovering } = useTimelineItem({ root, tween, onSelect })
 
   return (
     <div
-      style={{
-        '--start-offset-percentage': startPerc + '%',
-        '--tween-color': colors[idx % colors.length]?.[1]
-      }}
+      style={
+        {
+          '--start-offset-percentage': startPerc + '%',
+          '--tween-color': colors[idx % colors.length]?.[1],
+        } as React.CSSProperties
+      }
       className={s['set']}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
@@ -265,27 +226,15 @@ const Set = ({
         className={clsx(s['set-inner'], selected && [s['selected']])}
         style={{
           // @ts-ignore
-          background:
-            'linear-gradient(90deg, transparent 0%, ' +
-            colors[idx % colors.length]?.[0] +
-            ' 100%)'
+          background: 'linear-gradient(90deg, transparent 0%, ' + colors[idx % colors.length]?.[0] + ' 100%)',
         }}
       />
     </div>
   )
 }
 
-const Waypoint = ({
-  tween,
-  root
-}: {
-  tween: VisualizerItem
-  root: VisualizerRoot
-  idx: number
-}) => {
-  const [lastState, setLastState] = useState<
-    'complete' | 'reverse-complete' | undefined
-  >(undefined)
+const Waypoint = ({ tween, root }: { tween: VisualizerItem; root: VisualizerRoot; idx: number }) => {
+  const [lastState, setLastState] = useState<'complete' | 'reverse-complete' | undefined>(undefined)
 
   useEffect(() => {
     if (tween.data._visualizer.type === 'waypoint') {
@@ -303,7 +252,7 @@ const Waypoint = ({
     <div
       style={{
         // @ts-ignore
-        '--start-offset-percentage': tween._start + '%'
+        '--start-offset-percentage': tween._start + '%',
       }}
       className={s['waypoint']}
       onClick={() => {
@@ -322,19 +271,8 @@ const Waypoint = ({
         }
       }}
     >
-      <span
-        className={clsx(
-          s['onReverseCall'],
-          lastState === 'reverse-complete' && s['active']
-        )}
-      >
-        <svg
-          width="12"
-          height="12"
-          viewBox="0 0 12 12"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
+      <span className={clsx(s['onReverseCall'], lastState === 'reverse-complete' && s['active'])}>
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path
             d="M6.375 9.75L2.625 6L6.375 2.25M9.375 9.75L5.625 6L9.375 2.25"
             stroke="white"
@@ -343,13 +281,7 @@ const Waypoint = ({
           />
         </svg>
       </span>
-      <svg
-        width="12"
-        height="12"
-        viewBox="0 0 12 12"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path
           d="M1.5 1.5V2.25V1.5ZM1.5 10.5V7.5V10.5ZM1.5 7.5L2.885 7.1535C3.9272 6.89302 5.0282 7.01398 5.989 7.4945L6.043 7.5215C6.98459 7.9921 8.06137 8.11772 9.086 7.8765L10.643 7.5105C10.4523 5.76591 10.4515 4.00577 10.6405 2.261L9.0855 2.627C8.06097 2.86794 6.98439 2.74215 6.043 2.2715L5.989 2.2445C5.0282 1.76398 3.9272 1.64302 2.885 1.9035L1.5 2.25M1.5 7.5V2.25V7.5Z"
           fill="white"
@@ -362,16 +294,8 @@ const Waypoint = ({
           strokeLinejoin="round"
         />
       </svg>
-      <span
-        className={clsx(s['onCall'], lastState === 'complete' && s['active'])}
-      >
-        <svg
-          width="12"
-          height="12"
-          viewBox="0 0 12 12"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
+      <span className={clsx(s['onCall'], lastState === 'complete' && s['active'])}>
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path
             d="M5.625 2.25L9.375 6L5.625 9.75M2.625 2.25L6.375 6L2.625 9.75"
             stroke="white"
@@ -399,9 +323,7 @@ const ProgressStatus = ({ root }: { root: VisualizerRoot | undefined }) => {
   return <>{(progress * 100).toFixed(0)}%</>
 }
 
-const Select = (
-  props: React.HTMLAttributes<HTMLSelectElement> & { value: string }
-) => {
+const Select = (props: React.HTMLAttributes<HTMLSelectElement> & { value: string }) => {
   return (
     <div className={s['selectWrapper']}>
       <select {...props} className={clsx(s['select'], props.className)} />
@@ -413,49 +335,44 @@ const Select = (
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <path
-          d="M9.75 4.125L6 7.875L2.25 4.125"
-          stroke="white"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+        <path d="M9.75 4.125L6 7.875L2.25 4.125" stroke="white" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     </div>
   )
 }
 
-const Guides = () => (
-  <div className={s['guides']}>
-    <div className={s['guides-inner']}>
-      <div className={s['guide']} style={{ left: '0%' }}>
-        <span className={s['percent']}>0%</span>
-        <div className={s['line']} />
-      </div>
-      <div className={s['guide']} style={{ left: '25%' }}>
-        <span className={s['percent']}>25%</span>
-        <div className={s['line']} />
-      </div>
-      <div className={s['guide']} style={{ left: '50%' }}>
-        <span className={s['percent']}>50%</span>
-        <div className={s['line']} />
-      </div>
-      <div className={s['guide']} style={{ left: '75%' }}>
-        <span className={s['percent']}>75%</span>
-        <div className={s['line']} />
-      </div>
-      <div className={s['guide']} style={{ left: '100%' }}>
-        <span className={s['percent']}>100%</span>
-        <div className={s['line']} />
+const Guides = () => {
+  console.log('here', s['guides-inner'])
+  return (
+    <div className={s['guides']}>
+      <div className={s['guides-inner']}>
+        <div className={s['guide']} style={{ left: '0%' }}>
+          <span className={s['percent']}>0%</span>
+          <div className={s['line']} />
+        </div>
+        <div className={s['guide']} style={{ left: '25%' }}>
+          <span className={s['percent']}>25%</span>
+          <div className={s['line']} />
+        </div>
+        <div className={s['guide']} style={{ left: '50%' }}>
+          <span className={s['percent']}>50%</span>
+          <div className={s['line']} />
+        </div>
+        <div className={s['guide']} style={{ left: '75%' }}>
+          <span className={s['percent']}>75%</span>
+          <div className={s['line']} />
+        </div>
+        <div className={s['guide']} style={{ left: '100%' }}>
+          <span className={s['percent']}>100%</span>
+          <div className={s['line']} />
+        </div>
       </div>
     </div>
-  </div>
-)
+  )
+}
 
-const useSessionStorageConfig = <T extends any>(
-  key: string,
-  defaultValue: T
-) => {
-  const PREFIX = '@bmsmnt/timeline-visualizer:'
+const useSessionStorageConfig = <T extends any>(key: string, defaultValue: T) => {
+  const PREFIX = '@bsmnt/timeline-visualizer:'
   const [value, setValue] = useState<T>(() => {
     const storedValue = sessionStorage.getItem(PREFIX + key)
     return storedValue ? JSON.parse(storedValue) : defaultValue
@@ -470,7 +387,7 @@ const useSessionStorageConfig = <T extends any>(
 }
 
 const calculateStaggeredTweenDuration = (
-  tween: VisualizerItem
+  tween: VisualizerItem,
 ): {
   tweenDuration: number
   gap: number
@@ -484,7 +401,7 @@ const calculateStaggeredTweenDuration = (
       amount,
       ease,
       grid,
-      from
+      from,
     })
     const trgts = tween.targets()
     const v = trgts.map((t: any, idx: number) => {
@@ -498,25 +415,16 @@ const calculateStaggeredTweenDuration = (
 
   return {
     tweenDuration: tween.duration(),
-    gap: 0
+    gap: 0,
   }
 }
 
-const Info = ({
-  root,
-  selectedItem
-}: {
-  root: VisualizerRoot
-  selectedItem: VisualizerItem | undefined
-}) => {
-  const [state, setState] = useState<'playing' | 'paused'>(
-    root.tween?.isActive() ? 'playing' : 'paused'
-  )
+const Info = ({ root, selectedItem }: { root: VisualizerRoot; selectedItem: VisualizerItem | undefined }) => {
+  const [state, setState] = useState<'playing' | 'paused'>(root.tween?.isActive() ? 'playing' : 'paused')
   const [loop, setLoop] = useState(root.tween?.repeat() === -1)
   const rootData = root?.tween?.data?._visualizer as DataAttribute
 
-  if (rootData.type !== 'root')
-    throw new Error('Selected root is not root type')
+  if (rootData.type !== 'root') throw new Error('Selected root is not root type')
 
   const totalDuration = root?.tween?.duration() || 0
   const showDurationWarning = rootData.isScrollytelling && totalDuration != 100
@@ -529,21 +437,12 @@ const Info = ({
         {totalDuration}
         {unit}
         {showDurationWarning && (
-          <span title="This timeline is not normalized! You may experience bad UI.">
-            {' ❗️'}
-          </span>
+          <span title="This timeline is not normalized! You may experience bad UI.">{' ❗️'}</span>
         )}
-      </>
+      </>,
     ],
-    [
-      <>Total Pixels</>,
-      <>
-        {(root.tween?.scrollTrigger?.end ?? 0) -
-          (root.tween?.scrollTrigger?.start ?? 0)}{' '}
-        px
-      </>
-    ],
-    [<>Total Tweens</>, <>{root.children.length} </>]
+    [<>Total Pixels</>, <>{(root.tween?.scrollTrigger?.end ?? 0) - (root.tween?.scrollTrigger?.start ?? 0)} px</>],
+    [<>Total Tweens</>, <>{root.children.length} </>],
   ]
 
   const itemInfo = []
@@ -562,43 +461,40 @@ const Info = ({
         <>Target</>,
         <>
           ({targets?.length}) {targetString}
-        </>
+        </>,
       ],
       [
         <>Duration</>,
         <>
           {selectedItem._dur}
           {unit}
-        </>
+        </>,
       ],
       [
         <>Start</>,
         <>
           {selectedItem._start}
           {unit}
-        </>
+        </>,
       ],
       [
         <>End</>,
         <>
           {selectedItem._start + selectedItem._dur}
           {unit}
-        </>
-      ]
+        </>,
+      ],
     )
 
     if (selectedItem instanceof gsap.core.Tween) {
       itemInfo.push([
         <>Easing</>,
         <div>
-          <p
-            className={s['info-title']}
-            title={selectedItem.vars.ease?.toString()}
-          >
+          <p className={s['info-title']} title={selectedItem.vars.ease?.toString()}>
             {selectedItem.vars.ease?.toString() ?? 'No ease provided'}
           </p>
           {selectedItem.vars.ease && <EasePlot tween={selectedItem} />}
-        </div>
+        </div>,
       ])
     }
   }
@@ -675,14 +571,7 @@ const Info = ({
                 return (
                   <>
                     <div className={s['key']}>{r[0]}</div>
-                    <div
-                      className={clsx(
-                        s['value'],
-                        idx === arr.length - 1 && s['no-padding']
-                      )}
-                    >
-                      {r[1]}
-                    </div>
+                    <div className={clsx(s['value'], idx === arr.length - 1 && s['no-padding'])}>{r[1]}</div>
                   </>
                 )
               })}
@@ -698,10 +587,7 @@ const Info = ({
           <button className={s['restart']} onClick={handleRestart}>
             ↩
           </button>
-          <button
-            className={clsx(s['loop'], loop && s['looping'])}
-            onClick={handleLoop}
-          >
+          <button className={clsx(s['loop'], loop && s['looping'])} onClick={handleLoop}>
             {loop ? 'looping' : 'loop'}
           </button>
         </div>
@@ -786,26 +672,11 @@ const ProgressAndThumb = ({ root }: { root: VisualizerRoot | undefined }) => {
             <span className={s['percent']}>
               <ProgressStatus root={root} />
             </span>
-            <svg
-              width="8"
-              height="11"
-              viewBox="0 0 8 11"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
+            <svg width="8" height="11" viewBox="0 0 8 11" fill="none" xmlns="http://www.w3.org/2000/svg">
               <mask id="path-1-inside-1_2793_1632" fill="white">
-                <path
-                  fillRule="evenodd"
-                  clipRule="evenodd"
-                  d="M8 0H0V8L4 11L8 8V0Z"
-                />
+                <path fillRule="evenodd" clipRule="evenodd" d="M8 0H0V8L4 11L8 8V0Z" />
               </mask>
-              <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M8 0H0V8L4 11L8 8V0Z"
-                fill="white"
-              />
+              <path fillRule="evenodd" clipRule="evenodd" d="M8 0H0V8L4 11L8 8V0Z" fill="white" />
               <path
                 d="M0 0V-1H-1V0H0ZM8 0H9V-1H8V0ZM0 8H-1V8.5L-0.6 8.8L0 8ZM4 11L3.4 11.8L4 12.25L4.6 11.8L4 11ZM8 8L8.6 8.8L9 8.5V8H8ZM0 1H8V-1H0V1ZM1 8V0H-1V8H1ZM4.6 10.2L0.6 7.2L-0.6 8.8L3.4 11.8L4.6 10.2ZM7.4 7.2L3.4 10.2L4.6 11.8L8.6 8.8L7.4 7.2ZM7 0V8H9V0H7Z"
                 fill="white"
@@ -831,22 +702,18 @@ export const Visualizer = () => {
   const [initialized, setInitialized] = useState(false)
   const [scrollTop, setScrollTop] = useState<number>()
   const [isUserScroll, _setIsUserScroll] = useState(true)
-  const [selectedTween, setSelectedTween] = useState<
-    VisualizerItem | undefined
-  >()
+  const [selectedTween, setSelectedTween] = useState<VisualizerItem | undefined>()
 
   const [minimize, setMinimize] = useSessionStorageConfig('minimize', false)
   const [ghost, setGhost] = useSessionStorageConfig('ghost', false)
   const [height, setHeight, heightRef] = useSessionStorageConfig('height', 350)
-  const [selectedRoot, setSelectedRoot] = useSessionStorageConfig(
-    'last-root-selected',
-    ''
-  )
+  const [selectedRoot, setSelectedRoot] = useSessionStorageConfig('last-root-selected', '')
 
   const root = roots.find((r) => r.id === selectedRoot) ?? roots[0]
 
   /* Temporaly removed */
   useEffect(() => {
+    console.log(window)
     return
     if (!isUserScroll) return
 
@@ -860,11 +727,7 @@ export const Visualizer = () => {
       const progress = r?.tween?.progress() as number
       const roundedProgress = Math.round(progress * 100) / 100
 
-      return (
-        roundedProgress !== undefined &&
-        roundedProgress > 0 &&
-        roundedProgress < 1
-      )
+      return roundedProgress !== undefined && roundedProgress > 0 && roundedProgress < 1
     })
 
     if (!activeRoot) return
@@ -956,7 +819,7 @@ export const Visualizer = () => {
                 label: data?.label,
                 debug: true,
                 children: [],
-                tween: t as any
+                tween: t as any,
               })
             } else {
               existingRootItem.debug = true
@@ -969,14 +832,10 @@ export const Visualizer = () => {
               label: data?.label,
               debug: true,
               children: [t as any],
-              tween: t as any
+              tween: t as any,
             })
           }
-        } else if (
-          data.type === 'animation' ||
-          data.type === 'waypoint' ||
-          data.type === 'instant-animation'
-        ) {
+        } else if (data.type === 'animation' || data.type === 'waypoint' || data.type === 'instant-animation') {
           const existingRootItem = roots.find((r) => r.tween === t.parent)
 
           if (!existingRootItem) {
@@ -987,7 +846,7 @@ export const Visualizer = () => {
               debug: false,
               label: '',
               children: [t as any],
-              tween: t.parent
+              tween: t.parent,
             })
           } else {
             existingRootItem.children.push(t as any)
@@ -1020,13 +879,7 @@ export const Visualizer = () => {
   if (dismiss) return <></>
 
   return (
-    <div
-      className={clsx(
-        s['root'],
-        initialized && s['initialized'],
-        ghost && s['ghost']
-      )}
-    >
+    <div className={clsx(s['root'], initialized && s['initialized'], ghost && s['ghost'])}>
       <header className={s['header']}>
         <div className={s['actions']}>
           <Select
@@ -1049,34 +902,29 @@ export const Visualizer = () => {
 
         <div
           className={s['handle']}
-          style={{
-            '--viewport-height': height + 'px',
-            visibility: minimize ? 'hidden' : 'visible',
-            pointerEvents: minimize ? 'none' : 'auto'
-          }}
+          style={
+            {
+              '--viewport-height': height + 'px',
+              visibility: minimize ? 'hidden' : 'visible',
+              pointerEvents: minimize ? 'none' : 'auto',
+            } as React.CSSProperties
+          }
           ref={panelHeaderRef}
         />
 
         <div className={s['actions']}>
           <button
             style={{
-              textDecoration: ghost ? 'line-through' : 'none'
+              textDecoration: ghost ? 'line-through' : 'none',
             }}
             className={s['button']}
             onClick={() => setGhost((g) => !g)}
           >
             G
           </button>
-          <button
-            className={s['button']}
-            onClick={() => setMinimize((p) => !p)}
-          >
+          <button className={s['button']} onClick={() => setMinimize((p) => !p)}>
             {minimize ? (
-              <svg
-                viewBox="0 0 16 16"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
+              <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path
                   fillRule="evenodd"
                   clipRule="evenodd"
@@ -1091,11 +939,7 @@ export const Visualizer = () => {
                 />
               </svg>
             ) : (
-              <svg
-                viewBox="0 0 16 16"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
+              <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path
                   fillRule="evenodd"
                   clipRule="evenodd"
@@ -1106,11 +950,7 @@ export const Visualizer = () => {
             )}
           </button>
           <button className={s['button']} onClick={() => setDismiss(true)}>
-            <svg
-              viewBox="0 0 16 16"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
+            <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
                 fillRule="evenodd"
                 clipRule="evenodd"
